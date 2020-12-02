@@ -65,6 +65,7 @@ class WatercolorSets {
         System.out.println("交集intersection(set1, set2): " + intersection(set1, set2) + "\n");
         System.out.println("差集difference(set1, set2): " + difference(set1, set2) + "\n");
         System.out.println("补集complement(set1, set2)" + complement(set1, set2) + "\n");
+        System.out.println();
         }
     }
 }
