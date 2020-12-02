@@ -1,8 +1,9 @@
 package chapter_20_泛型.part_02_泛型接口和泛型方法;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.Method;
+import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -119,6 +120,109 @@ class BasicSupplierDemo {
  */
 
 /**
- * 泛型方法的使用实例（四）：一个 Set 工具类
+ * 泛型方法的使用实例（四）：一个 Set 工具类，代表数学集合操作
  */
+class Sets {
+    // 并集
+    public static <T> Set<T> union(Set<T> a, Set<T> b) {
+        Set<T> result = new HashSet<>(a);
+        result.addAll(b);
+        return result;
+    }
 
+    // 交集
+    public static <T> Set<T> intersection(Set<T> a, Set<T> b) {
+        Set<T> result = new HashSet<>(a);
+        result.retainAll(b);
+        return result;
+    }
+
+    // 差集
+    public static <T> Set<T> difference(Set<T> superset, Set<T> subset) {
+        Set<T> result = new HashSet<>(superset);
+        result.removeAll(subset);
+        return result;
+    }
+
+    // Reflexive--everything not in the intersection:
+    // 反射性——所有不在交集的东西:
+    public static <T> Set<T> complement(Set<T> a, Set<T> b) {
+        return difference(union(a, b), intersection(a, b));
+    }
+}
+// Sets 工具类的应用（一）
+enum Watercolors {
+    ZINC, LEMON_YELLOW, MEDIUM_YELLOW, DEEP_YELLOW,
+    ORANGE, BRILLIANT_RED, CRIMSON, MAGENTA,
+    ROSE_MADDER, VIOLET, CERULEAN_BLUE_HUE,
+    PHTHALO_BLUE, ULTRAMARINE, COBALT_BLUE_HUE,
+    PERMANENT_GREEN, VIRIDIAN_HUE, SAP_GREEN,
+    YELLOW_OCHRE, BURNT_SIENNA, RAW_UMBER,
+    BURNT_UMBER, PAYNES_GRAY, IVORY_BLACK
+}
+class WatercolorSets {
+    public static void main(String[] args) {
+        Set<Watercolors> set1 = EnumSet.range(Watercolors.BRILLIANT_RED, Watercolors.VIRIDIAN_HUE);
+        Set<Watercolors> set2 = EnumSet.range(Watercolors.CERULEAN_BLUE_HUE, Watercolors.BURNT_UMBER);
+        System.out.println("set1: " + set1);
+        System.out.println("set2: " + set2 + "\n");
+        System.out.println("并集union(set1, set2): " + Sets.union(set1, set2) + "\n");
+        System.out.println("交集intersection(set1, set2): " + Sets.intersection(set1, set2) + "\n");
+        System.out.println("差集difference(set1, set2): " + Sets.difference(set1, set2) + "\n");
+        System.out.println("补集complement(set1, set2)" + Sets.complement(set1, set2) + "\n");
+        System.out.println();
+    }
+}
+// Sets 工具类的应用（二）：Sets.difference() 方法来展示 java.util 包中各种 Collection 和 Map 类之间的方法差异
+class CollectionMethodDifferences {
+    static Set<String> methodSet(Class<?> type) {
+        return Arrays.stream(type.getMethods())
+                .map(Method::getName)
+                .collect(Collectors.toCollection(TreeSet::new));
+    }
+
+    static void interfaces(Class<?> type) {
+        System.out.print("Interfaces in " + type.getSimpleName() + ": ");
+        System.out.println(
+                Arrays.stream(type.getInterfaces())
+                        .map(Class::getSimpleName)
+                        .collect(Collectors.toList())
+        );
+    }
+
+    static Set<String> object = methodSet(Object.class);
+
+    static {
+        object.add("clone");
+    }
+
+    static void difference(Class<?> superset, Class<?> subset) {
+        System.out.print(superset.getSimpleName() +
+                " extends " + subset.getSimpleName() +
+                ", adds: ");
+        Set<String> comp = Sets.difference(
+                methodSet(superset), methodSet(subset));
+        comp.removeAll(object); // Ignore 'Object' methods
+        System.out.println(comp);
+        interfaces(superset);
+    }
+
+    public static void main(String[] args) {
+        System.out.println("Collection: " + methodSet(Collection.class));
+        interfaces(Collection.class);
+        difference(Set.class, Collection.class);
+        difference(HashSet.class, Set.class);
+        difference(LinkedHashSet.class, HashSet.class);
+        difference(TreeSet.class, Set.class);
+        difference(List.class, Collection.class);
+        difference(ArrayList.class, List.class);
+        difference(LinkedList.class, List.class);
+        difference(Queue.class, Collection.class);
+        difference(PriorityQueue.class, Queue.class);
+        System.out.println("Map: " + methodSet(Map.class));
+        difference(HashMap.class, Map.class);
+        difference(LinkedHashMap.class, HashMap.class);
+        difference(SortedMap.class, Map.class);
+        difference(TreeMap.class, Map.class);
+    }
+}
