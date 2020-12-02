@@ -1,26 +1,23 @@
-package 泛型.简单泛型;
+package chapter_20_泛型.part_01_简单泛型;
 
 /**
- * <p>文件名称: LinkedStack </p>
- * <p>功能  堆栈类</p>
- * <p>创建时间：2020/11/30</p>
- *
- * @author qiang.jin
+ * 用链式结构实现自己的堆栈
  */
-public class LinkedStack<T> {
+class LinkedStack<T> {
     private static class Node<U> {
         U item;
         Node<U> next;
 
-        Node() { item = null; next = null; }
+        Node() {
+            item = null;
+            next = null;
+        }
         Node(U item, Node<U> next) {
             this.item = item;
             this.next = next;
         }
 
-        /**
-         * 判断节点是否为尾节点
-         */
+        // 判断节点是否为尾节点
         boolean end() {
             return item == null && next == null;
         }
@@ -41,14 +38,13 @@ public class LinkedStack<T> {
     }
 
     public static void main(String[] args) {
-        LinkedStack<String> linkedStack = new LinkedStack<String>();
-        for (String item : "I am good man".split(" ")) {
-            linkedStack.push(item);
+        LinkedStack<String> linkedStack = new LinkedStack<>();
+        for (String s : "I am good man".split(" ")) {
+            linkedStack.push(s);
         }
         String s;
         while((s = linkedStack.pop()) != null) {
             System.out.println(s);
         }
     }
-
 }
