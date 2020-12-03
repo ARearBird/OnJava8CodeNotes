@@ -1,5 +1,7 @@
 package chapter_20_泛型.part_01_简单泛型;
 
+import java.util.ArrayList;
+
 /**
  * 元组类
  */
@@ -129,5 +131,17 @@ class TupleTest2 {
         System.out.println(f2());
         System.out.println(g());
         System.out.println(h());
+    }
+}
+
+/**
+ * 构建复杂模型：轻松创建一个元组列表
+ */
+class TupleList<A, B, C, D> extends ArrayList<Tuple4<A, B, C, D>> {
+    public static void main(String[] args) {
+        TupleList<Vehicle, Amphibian, String, Integer> tl = new TupleList<>();
+        tl.add(TupleTest2.h());
+        tl.add(TupleTest2.h());
+        tl.forEach(System.out::println);
     }
 }
