@@ -1,6 +1,10 @@
 package chapter_20_泛型.泛型擦除;
 
+import chapter_20_泛型.Suppliers;
+
+import java.lang.reflect.Array;
 import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * 泛型擦除引入
@@ -113,5 +117,49 @@ class ReturnGenericType<T extends HasF> {
     }
     public T get() {
         return obj;
+    }
+}
+
+/**
+ * 擦除的问题
+ */
+class Foo<T> {
+    T var;
+}
+class TestFoo {
+    public static void main(String[] args) {
+        Foo<String> f = new Foo<>();
+        System.out.println(Arrays.toString(f.getClass().getTypeParameters()));
+        List<String> l = new ArrayList<>();
+        System.out.println(Arrays.toString(l.getClass().getTypeParameters()));
+    }
+}
+// 看上去当创建一个 Foo 实例时，TestFoo 中的代码应该知道现在工作于 String 之上。
+// 泛型语法也强烈暗示整个类中所有 T 出现的地方都被替换为 String
+// 但事实并非如此，当在编写这个类的代码时，必须提醒自己：“不，这只是一个 Object”
+
+// 我们希望泛型可以这样：
+// TODO: 这个列子是干嘛的？？？
+class GenericBase<T> {
+    private T element;
+
+    public void set(T arg) {
+        element = arg;
+    }
+    public T get() {
+        return element;
+    }
+}
+// 使用类型参数
+class Derived1<T> extends GenericBase<T> {}
+// 不使用类型参数
+class Derived2 extends GenericBase {}
+// class Derived3 extends GenericBase<?> {} // No wildcard expected
+class ErasureAndInteritance {
+    @SuppressWarnings("unchecked")
+    public static void main(String[] args) {
+        Derived2 d2 = new Derived2();
+        Object obj = d2.get();
+        d2.set(obj);
     }
 }
