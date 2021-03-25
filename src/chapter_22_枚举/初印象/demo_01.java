@@ -1,6 +1,8 @@
 package chapter_22_枚举.初印象;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * <p>项目名称: XNRH</p>
@@ -28,7 +30,7 @@ class SimpleEnumUse {
 class EnumOrder {
     public static void main(String[] args) {
         for (Spiciness s : Spiciness.values()) {
-            System.out.println(s + ", ordinal " + s.ordinal() + ", name " + s.name());
+            System.out.println(s + ": ordinal=" + s.ordinal() + ", name=" + s.name());
         }
 
         // 按照 enum 常量的声明顺序，生成这些常量值构成的数组
@@ -67,6 +69,5 @@ class Burrito {
         plain.describe();
         greenChile.describe();
         jalap.describe();
-
     }
 }
